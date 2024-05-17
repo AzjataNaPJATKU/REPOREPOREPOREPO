@@ -164,7 +164,9 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<Emp> Task1()
         {
-            IEnumerable<Emp> result = null;
+            var querySyntax = from e in Emps where e.Job.Equals("Backend programmer") select e;
+            
+            IEnumerable<Emp> result = querySyntax;
             return result;
         }
 
@@ -173,7 +175,14 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<Emp> Task2()
         {
-            IEnumerable<Emp> result = null;
+            // Method syntax
+             var methodSyntax = Emps.Where(e => e.Job.Equals("Frontend programmer")
+                                                && e.Salary > 1000).OrderByDescending(e => e.Ename);
+             // Query syntax
+             var querySyntax = from e in Emps where e.Job.Equals("Frontend programmer")
+                                                    && e.Salary > 1000 orderby e.Ename descending select e;
+            
+            IEnumerable<Emp> result = querySyntax;
             return result;
         }
 
@@ -183,7 +192,8 @@ namespace Exercise6
         /// </summary>
         public static int Task3()
         {
-            int result = 0;
+            var methodSyntax = from e in Emps select e.Salary;
+            int result = methodSyntax.Max();
             return result;
         }
 
@@ -192,7 +202,9 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<Emp> Task4()
         {
-            IEnumerable<Emp> result = null;
+            var methodSyntaxMax = from e in Emps select e.Salary;
+            var methodSyntax = from e in Emps where e.Salary.Equals(methodSyntaxMax.Max()) select e;
+            IEnumerable<Emp> result = methodSyntax;
             return result;
         }
 
@@ -201,7 +213,11 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task5()
         {
-            IEnumerable<object> result = null;
+            // Method syntax
+            var methodSyntax = Emps.Select(e => new { Nazwisko = e.Ename, Praca = e.Job });
+            // Query syntax
+            var querySyntax = from e in Emps select new { Nazwisko = e.Ename, Praca = e.Job };            
+            IEnumerable<object> result = querySyntax;
             return result;
         }
 
@@ -212,7 +228,11 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task6()
         {
-            IEnumerable<object> result = null;
+            var syntax = from e in Emps join 
+                f in Depts on e.Deptno equals f.Deptno 
+                select (new {e.Ename,e.Job,f.Dname});
+            
+            IEnumerable<object> result = syntax;
             return result;
         }
 
@@ -221,7 +241,9 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task7()
         {
-            IEnumerable<object> result = null;
+            var syntax = Emps.GroupBy(emp => emp.Job).
+                Select(e => new {Praca=e.Key, LiczbaPracownikow=e.Count() });
+            IEnumerable<object> result = syntax;
             return result;
         }
 
@@ -231,7 +253,7 @@ namespace Exercise6
         /// </summary>
         public static bool Task8()
         {
-            bool result = false;
+            bool result = (from e in Emps where e.Job.Equals("Backend programmer") select e).Any();
             return result;
         }
 
@@ -241,7 +263,10 @@ namespace Exercise6
         /// </summary>
         public static Emp Task9()
         {
-            Emp result = null;
+            var querySyntax = from e in Emps where e.Job.Equals("Frontend programmer")
+                                                   orderby e.HireDate descending select e;
+            
+            Emp result = querySyntax.First();
             return result;
         }
 
@@ -252,6 +277,10 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task10()
         {
+            var syntaxFirst = from e in Emps select new {e.Ename,e.Job,e.HireDate};
+            
+            
+            
             IEnumerable<object> result = null;
             return result;
         }
@@ -269,6 +298,7 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task11()
         {
+            
             IEnumerable<object> result = null;
             return result;
         }
