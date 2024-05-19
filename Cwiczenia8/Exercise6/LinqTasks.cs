@@ -278,10 +278,17 @@ namespace Exercise6
         public static IEnumerable<object> Task10()
         {
             var syntaxFirst = from e in Emps select new {e.Ename,e.Job,e.HireDate};
+
+            var newlist = new List<Emp>()
+            {
+                new Emp(){Ename = "Brak wartości",Job = null, HireDate = null}
+            };
+
+            var syntaxSecond = from e in newlist select new { e.Ename, e.Job, e.HireDate };
             
+            var unionOnion = syntaxFirst.Union(syntaxSecond);
             
-            
-            IEnumerable<object> result = null;
+            IEnumerable<object> result = unionOnion;
             return result;
         }
 
@@ -298,8 +305,12 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<object> Task11()
         {
+            var syntax = Emps.Join(Depts, emp => emp.Deptno, dept => dept.Deptno,
+                    (emp, dept) => new { emp, dept.Dname }).GroupBy(d => d.Dname)
+                .Where(group => group.Count() > 1)
+                .Select(group => new { name = group.Key, numOfEmployees = group.Count() });
             
-            IEnumerable<object> result = null;
+            IEnumerable<object> result = syntax;
             return result;
         }
 
@@ -312,7 +323,7 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<Emp> Task12()
         {
-            IEnumerable<Emp> result = null;
+            IEnumerable<Emp> result = CustomExtensionMethods.function(Emps);
             return result;
         }
 
@@ -325,7 +336,10 @@ namespace Exercise6
         /// </summary>
         public static int Task13(int[] arr)
         {
-            int result = 0;
+            var syntax = arr.GroupBy(ar => ar)
+                .Where(ar => ar.Count() % 2 == 1)
+                .Select(ar => ar.Key).Single();
+            int result = syntax;
             //result=
             return result;
         }
@@ -336,7 +350,13 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<Dept> Task14()
         {
-            IEnumerable<Dept> result = null;
+            var syntax = Depts.GroupJoin(Emps, dept => dept.Deptno, emp => emp.Deptno,
+                    (dept, emp) => new  { Dept = dept, empCount = emp.Count() })
+                .Where(group => group.empCount == 5 || group.empCount == 0)
+                .OrderBy(d => d.Dept.Dname)
+                .Select(group => group.Dept);
+            
+            IEnumerable<Dept> result = syntax;
             //result =
             return result;
         }
@@ -344,6 +364,15 @@ namespace Exercise6
 
     public static class CustomExtensionMethods
     {
-        //Put your extension methods here
+        public static IEnumerable<Emp> function(IEnumerable<Emp> Emps)
+        {
+            var result = Emps
+                .Where(emp => Emps.Any(sub => sub.Mgr != null && sub.Mgr.Empno == emp.Empno))
+                .OrderBy(emp => emp.Ename)
+                .ThenByDescending(emp => emp.Salary)
+                .Select(res => res);
+
+            return result;
+        }
     }
 }
